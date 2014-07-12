@@ -108,8 +108,9 @@ if(query){
 }
 
 function viewAllStreams(){
-	var oFrame = document.getElementById("frmFile");
-	var strContents = oFrame.contentWindow.document.body.childNodes[0].innerHTML;
+  $.ajax({
+  url:'text.txt',
+  success: function (data){
 	var vals = strContents.split(":")
 	var params =""
 	for(var i =0;i<vals.length-1;i++){
@@ -122,6 +123,8 @@ function viewAllStreams(){
 	var baseUrl = window.location.origin+window.location.pathname
 	var newUrl = baseUrl+"?"+params
 	window.location = newUrl;
+  }
+  });
 }
 
 function createCopies(){
