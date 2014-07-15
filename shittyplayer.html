@@ -20,6 +20,8 @@
 </font>
 <script>
 num_players=1
+var rtmpAddress = <?php echo json_encode(file_get_contents("~/loc.text")); ?>;
+alert(rtmpAddress)
 var query = window.location.search.substring(1);
 var vars = query.split("&");
 if(query){
