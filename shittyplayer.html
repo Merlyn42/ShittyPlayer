@@ -19,9 +19,17 @@
 <div class='cloned-slides' id='cloned-slides'></div>
 </font>
 <script>
-num_players=1
-var rtmpAddress = <?php echo json_encode(file_get_contents("~/loc.text")); ?>;
-alert(rtmpAddress)
+var num_players=1;
+var rt;
+$.ajax({
+     async: false,
+     type: 'GET',
+     url: 'fc17ba.php',
+     success: function(data) {
+          rt=data
+     }
+});
+alert(rt);
 var query = window.location.search.substring(1);
 var vars = query.split("&");
 if(query){
@@ -162,7 +170,7 @@ function createPlayerA(name,stream){
 		plugins: {
 			rtmp: {
 				url: 'flowplayer.rtmp-3.2.13.swf',
-				netConnectionUrl: 'rtmp://109.169.46.148/live'
+				netConnectionUrl: rt
 			}
 		}
 	});
