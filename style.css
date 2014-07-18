@@ -71,7 +71,7 @@
 	color:#000000;
 	font-family:Verdana;
 	font-size:13px;
-	margin-bottom: 3px;
+  margin-bottom: 3px;
 	font-weight:bold;
 	font-style:normal;
 	height:26px;
@@ -88,7 +88,6 @@
 	position:relative;
 	top:1px;
 }
-/* This button was generated using CSSButtonGenerator.com */
 
 
 .closeButton {
@@ -100,6 +99,13 @@
      top:0;
      right:0;
  }
+
+  .credits{
+    font-size:10px;
+    font-family:Verdana;
+    float: right;
+  }
+
  .resizeButton {
      line-height: 10px;
      width: 18px;
