@@ -1,7 +1,7 @@
 </head>
 	<body>
 		<?php  
-			$dir = "text.txt";
+			$dir = "streams.txt";
 			$line = $_POST['name'].":";
 			$contents = file_get_contents($dir);
 			$contents = str_replace($line, '', $contents);
