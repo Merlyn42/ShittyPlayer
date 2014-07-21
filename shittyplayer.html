@@ -24,6 +24,12 @@
 </font>
 <script>
 
+if (!String.prototype.contains) {
+    String.prototype.contains = function(s, i) {
+        return this.indexOf(s, i) != -1;
+    }
+}
+
 var num_players = 1;
 var query = window.location.search.substring(1);
 var vars = query.split("&");
@@ -31,12 +37,6 @@ if (query) {
     for (i in vars) {
         var pair = vars[i].split("=");
         createPlayerA(pair[0], pair[1])
-    }
-}
-
-if (!String.prototype.contains) {
-    String.prototype.contains = function(s, i) {
-        return this.indexOf(s, i) != -1;
     }
 }
 
