@@ -10,7 +10,7 @@ var vars = query.split("&");
 if (query) {
     for (i in vars) {
         var pair = vars[i].split("=");
-        createPlayerA(pair[0], pair[1])
+        createPlayerA(pair[0], pair[1]);
     }
 }
 
@@ -19,66 +19,75 @@ $(".all-players").sortable({
     scroll: false,
     placeholder: "sortable-placeholder",
     cursor: "move",
-    start: function (e, t) {
-        t.helper.addClass("exclude-me");
-        $(".all-players .playerMargin:not(.exclude-me)").css("visibility", "hidden");
-        t.helper.data("clone").hide();
+
+    start: function (e, ui) {
+        ui.helper.addClass("exclude-me");
+        $(".all-players .playerMargin:not(.exclude-me)")
+            .css("visibility", "hidden");
+        ui.helper.data("clone").hide();
         $(".cloned-slides .playerMargin").css("visibility", "visible");
         $(".cloned-slides .playerMargin").css("width", "500px");
-        $(".cloned-slides .playerMargin").css("height", "290px")
+        $(".cloned-slides .playerMargin").css("height", "290px");
     },
-    stop: function (e, t) {
+
+    stop: function (e, ui) {
         $(".all-players .playerMargin.exclude-me").each(function () {
-            var e = $(this);
-            var t = e.data("clone");
-            var n = e.position();
-            t.css("left", n.left);
-            t.css("top", n.top);
-            t.show();
-            e.removeClass("exclude-me")
+            var item = $(this);
+            var clone = item.data("clone");
+            var position = item.position();
+
+            clone.css("left", position.left);
+            clone.css("top", position.top);
+            clone.show();
+
+            item.removeClass("exclude-me");
         });
+
         $(".all-players .playerMargin").each(function () {
-            var e = $(this);
-            var t = e.data("clone");
-            t.attr("data-pos", e.index())
+            var item = $(this);
+            var clone = item.data("clone");
+
+            clone.attr("data-pos", item.index());
         });
+
         $(".all-players .playerMargin").css("visibility", "visible");
-        $(".cloned-slides .playerMargin").css("visibility", "hidden")
+        $(".cloned-slides .playerMargin").css("visibility", "hidden");
     },
-    change: function (e, t) {
+
+    change: function (e, ui) {
         $(".all-players .playerMargin:not(.exclude-me)").each(function () {
-            var e = $(this);
-            var t = e.data("clone");
-            t.stop(true, false);
-            var n = e.position();
-            t.animate({
-                left: n.left,
-                top: n.top
-            }, 200)
-        })
+            var item = $(this);
+            var clone = item.data("clone");
+            clone.stop(true, false);
+            var position = item.position();
+            clone.animate({
+                left: position.left,
+                top: position.top
+            }, 200);
+        });
     }
-})
+});
 
 function fullscreen() {
     if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
         if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen()
+            document.documentElement.requestFullscreen();
         } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen()
+            document.documentElement.msRequestFullscreen();
         } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen()
+            document.documentElement.mozRequestFullScreen();
         } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
         }
     } else {
         if (document.exitFullscreen) {
-            document.exitFullscreen()
+            document.exitFullscreen();
         } else if (document.msExitFullscreen) {
-            document.msExitFullscreen()
+            document.msExitFullscreen();
         } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen()
+            document.mozCancelFullScreen();
         } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen()
+            document.webkitExitFullscreen();
         }
     }
 }
@@ -88,94 +97,95 @@ function viewAllStreams() {
         type: "GET",
         url: "streams.txt",
         cache: false,
-        success: function (e) {
-            var t = e.split(":");
-            var n = "";
-            for (var r = 0; r < t.length - 1; r++) {
-                if (r > 0) {
-                    n = n + "&"
+        success: function (data) {
+            var vals = data.split(":");
+            var params = "";
+            for (var i = 0; i < vals.length - 1; i++) {
+                if (i > 0) {
+                    params = params + "&"
                 }
-                n = n + t[r] + "=" + t[r]
+                params = params + vals[i] + "=" + vals[i]
+
             }
-            var i = window.location.origin + window.location.pathname;
-            var s = i + "?" + n;
-            window.location = s
+            var baseUrl = window.location.origin + window.location.pathname;
+            var newUrl = baseUrl + "?" + params;
+            window.location = newUrl;
         }
-    })
+    });
 }
 
 function createCopies() {
     $("#cloned-slides").empty();
-    $(".playerMargin").each(function (e) {
-        var t = $(this);
-        var n = t.clone();
-        t.data("clone", n);
-        var r = t.position();
-        n.css({
+    $(".playerMargin").each(function (data) {
+        var item = $(this);
+        var item_clone = item.clone();
+        item.data("clone", item_clone);
+        var position = item.position();
+        item_clone.css({
             position: "absolute",
-            left: r.left,
-            top: r.top,
+            left: position.left,
+            top: position.top,
             visibility: "hidden"
-        }).attr("data-pos", e + 1);
-        $("#cloned-slides").append(n)
+        }).attr("data-pos", data + 1);
+        $("#cloned-slides").append(item_clone)
     })
 }
 
-function removePlayer(e, t, n) {
-    $("#" + e).remove();
+function removePlayer(playerId, name, stream) {
+    $("#" + playerId).remove();
     createCopies();
-    var r = window.location.href.replace("?" + t + "=" + n + "&", "?");
-    var r = r.replace("?" + t + "=" + n, "");
-    var r = r.replace("&" + t + "=" + n, "");
-    window.history.replaceState("string", "ShittyPlayer", r)
+    var newUrl = window.location.href.replace("?" + name + "=" + stream + "&", "?");
+    newUrl = newUrl.replace("?" + name + "=" + stream, "");
+    newUrl = newUrl.replace("&" + name + "=" + stream, "");
+    window.history.replaceState("string", "ShittyPlayer", newUrl)
 }
 
-function changeRes(e, t, n) {
-    x = parseInt(t);
-    y = parseInt(n);
-    $("#box" + e).css("width", x + 20);
-    $("#player" + e).css("width", x);
-    $("#box" + e).css("height", y + 20);
-    $("#player" + e).css("height", y)
+function changeRes(num, xin, yin) {
+    x = parseInt(xin);
+    y = parseInt(yin);
+    $("#box" + num).css("width", x + 20);
+    $("#player" + num).css("width", x);
+    $("#box" + num).css("height", y + 20);
+    $("#player" + num).css("height", y)
 }
 
-function createPlayerA(e, t) {
-    var n = document.createElement("div");
-    n.id = "box" + num_players;
-    n.className = "playerMargin";
-    $("#all-players").append(n);
-    var r = document.createElement("input");
-    r.id = "closeButton" + num_players;
-    r.className = "closeButton";
-    r.setAttribute("player", "box" + num_players);
-    r.setAttribute("name", e);
-    r.setAttribute("stream", t);
-    r.type = "button";
-    r.value = "X";
-    r.setAttribute("onClick", "removePlayer(this.getAttribute('player'),this.getAttribute('name'),this.getAttribute('stream'))");
-    $("#box" + num_players).append(r);
-    var i = document.createElement("input");
-    i.id = "resizeButton" + num_players;
-    i.className = "resizeButton";
-    i.setAttribute("number", num_players);
-    i.type = "button";
-    i.value = "S";
-    i.setAttribute("onClick", "changeRes(this.getAttribute('number'),prompt('width',''),prompt('height',''))");
-    $("#box" + num_players).append(i);
-    var s = document.createElement("div");
-    s.id = "player" + num_players;
-    s.className = "player";
-    if (t.contains("Drunk") || t.contains("drunk")) {
-        s.setAttribute("nickname", "Langer")
+function createPlayerA(name, stream) {
+    var new_box= document.createElement("div");
+    new_box.id = "box" + num_players;
+    new_box.className = "playerMargin";
+    $("#all-players").append(new_box);
+    var close_button = document.createElement("input");
+    close_button.id = "closeButton" + num_players;
+    close_button.className = "closeButton";
+    close_button.setAttribute("player", "box" + num_players);
+    close_button.setAttribute("name", name);
+    close_button.setAttribute("stream", stream);
+    close_button.type = "button";
+    close_button.value = "X";
+    close_button.setAttribute("onClick", "removePlayer(this.getAttribute('player'),this.getAttribute('name'),this.getAttribute('stream'))");
+    $("#box" + num_players).append(close_button);
+    var resize_button = document.createElement("input");
+    resize_button.id = "resizeButton" + num_players;
+    resize_button.className = "resizeButton";
+    resize_button.setAttribute("number", num_players);
+    resize_button.type = "button";
+    resize_button.value = "S";
+    resize_button.setAttribute("onClick", "changeRes(this.getAttribute('number'),prompt('width',''),prompt('height',''))");
+    $("#box" + num_players).append(resize_button);
+    var new_player = document.createElement("div");
+    new_player.id = "player" + num_players;
+    new_player.className = "player";
+    if (stream.contains("Drunk") || stream.contains("drunk")) {
+        new_player.setAttribute("nickname", "Langer")
     } else {
-        s.setAttribute("nickname", e)
+        new_player.setAttribute("nickname", name)
     }
-    s.setAttribute("url", t);
-    $("#box" + num_players).append(s);
+    new_player.setAttribute("url", stream);
+    $("#box" + num_players).append(new_player);
     num_players += 1;
-    flowplayer(s.id, "flowplayer-3.2.18.swf", {
+    flowplayer(new_player.id, "flowplayer-3.2.18.swf", {
         clip: {
-            url: t,
+            url: stream,
             live: "true",
             provider: "rtmp",
             bufferLength: "0.0",
@@ -192,13 +202,13 @@ function createPlayerA(e, t) {
 }
 
 function createPlayer() {
-    var e = prompt("Please enter the stream nickname", "");
-    var t = prompt("Please enter the streamkey", "");
-    if (window.location.href.contains(e + "=" + t)) {
+    var name = prompt("Please enter the stream nickname", "");
+    var stream = prompt("Please enter the streamkey", "");
+    if (window.location.href.contains(name + "=" + stream)) {
         return
     }
-    var n = window.location.href.contains("?") ? "&" : "?";
-    var r = window.location + n + e + "=" + t;
-    window.history.replaceState("string", "ShittyPlayer", r);
-    createPlayerA(e, t)
+    var sep = window.location.href.contains("?") ? "&" : "?";
+    var newUrl = window.location + sep + name + "=" + stream;
+    window.history.replaceState("string", "ShittyPlayer", newUrl);
+    createPlayerA(name, stream)
 }
